@@ -43,7 +43,7 @@ jobs:
             # --- end .env creation ---
       - name: Run Tests and Save Report
         run: |
-          docker compose run --rm app sh -c "
+          docker compose run --rm --user 0 app sh -c "
             python manage.py wait_for_db &&
             pytest --junitxml=/app/test-reports/results.xml"
 
