@@ -1,0 +1,63 @@
+@host= https://localhost/api/user
+
+
+GET http://localhost:8000/api/health-check/ HTTP/1.1
+
+### Create a user - send the email and password - returns the access token and refresh token
+POST {{host}}/create/
+Content-Type: application/json
+
+{
+    "email": "alwisahel12@gmail.com",
+    "password": "Alwi123456",
+    "first_name": "alwisahel12",
+    "last_name": "gmail",
+    "date_of_birth": "1990-12-31"
+
+
+}
+
+### Authenticate a user - send the email and password - returns the access token and refresh token
+POST {{host}}/token/ HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "dev5@example.com",
+  "password": "dev123456"
+}
+
+
+### Geting the user details - send the access token - returns the user details
+
+GET  {{host}}/me/ HTTP/1.1
+Content-Type: application/json
+Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3NTgzNjEzLCJpYXQiOjE3NDM5ODM2MTMsImp0aSI6IjY1ZmU0ODFkYTVhZjQxZTJiYTVhZTQ4MjUxYTkzNGEzIiwidXNlcl9pZCI6M30.6ME97D4y4OHpVsOiUnSAdEQD4j7sDxQ10qDT9qy6VKQ
+### Refresh Token request - send the refresh token - returns new access token
+
+Post  {{host}}/token/refresh/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0NTYwNTM0MCwiaWF0IjoxNzQyNjY3NzQwLCJqdGkiOiI3ZWMyNTRmYjlmMjg0YjkyOWNkNjkxMGNmZWM1MTE1MCIsInVzZXJfaWQiOjN9.le_ujOw3_5gOfN8LJzEoNf7j2BPCNu6mf0V5NiQ6WvY"
+
+}
+
+
+### Request Password Reset
+POST {{host}}/reset-password/
+Content-Type: application/json
+
+{
+    "email": "alwisahel12@gmail.com"
+}
+
+
+### Confirm Password Reset
+POST {{host}}/reset-password/confirm/
+Content-Type: application/json
+
+{
+    "uid": "the_encoded_uid",        // Replace with the UID you received in the reset email
+    "token": "the_token",            // Replace with the token you received in the reset email
+    "new_password": "yournewpassword123"
+}
