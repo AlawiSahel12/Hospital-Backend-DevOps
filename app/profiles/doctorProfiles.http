@@ -1,0 +1,80 @@
+@host = http://localhost:8000/api/profiles/
+@admin_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3NjA2OTcyLCJpYXQiOjE3NDQwMDY5NzIsImp0aSI6Ijg3MWQ1NjZjNDk2YzQ3MGJiZWUyMjVhZTQ2MzJjOTY3IiwidXNlcl9pZCI6MX0.A5P986Vi_zBkF3Kt5XGM6q1YrpnJZ56zERnWk9bqiwE
+@public_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3NTk0OTEwLCJpYXQiOjE3NDM5OTQ5MTAsImp0aSI6IjJkNDUwY2NmNzk1YTRiN2E5ZGFkYzZiN2UwNDdmNTM5IiwidXNlcl9pZCI6MX0.uqt3S4XsmL0LdFWE89GXJaLmuth0hE--BhWM-4V9YoA
+##############################################
+# Doctor Profile Public Endpoints (No Authentication Required)
+##############################################
+
+### List Doctor Profiles (Public Access)
+GET {{host}}doctor/
+Accept: application/json
+
+### Retrieve a Doctor Profile by ID (Public Access)
+# (Assuming a doctor profile with ID 1 exists)
+GET {{host}}doctor/1/
+Accept: application/json
+
+##############################################
+# Doctor Profile Admin Endpoints (Admin Only)
+##############################################
+
+### Create Doctor Profile - Valid Request (Admin Only)
+POST {{host}}doctor/
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "user": 1,
+  "specialization": "dentestry",
+  "qualifications": "BDS",
+  "is_active": true
+}
+
+### Create Doctor Profile - Unauthorized Attempt (No Token)
+POST {{host}}doctor/
+Content-Type: application/json
+
+{
+  "user": 4,
+  "specialization": "Neurology",
+  "qualifications": "MD",
+  "is_active": true
+}
+
+### Update Doctor Profile (PATCH) - Valid Request (Admin Only)
+# (Assuming doctor profile with ID 1 exists)
+PATCH {{host}}doctor/1/
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "is_active": true
+}
+
+
+### Delete Doctor Profile - Soft Delete (Admin Only)
+# (Assuming doctor profile with ID 1 exists)
+DELETE {{host}}doctor/1/
+Authorization: Bearer {{admin_token}}
+
+### Retrieve Deleted Doctor Profile (to Confirm Soft Delete)
+# (After soft deletion, the record should remain but with is_active set to false)
+GET {{host}}doctor/1/
+Accept: application/json
+
+##############################################
+# Unauthorized Attempts for Modification
+##############################################
+
+### Attempt to Update Doctor Profile with Public Token (Should Fail)
+PATCH {{host}}doctor/1/
+Authorization: Bearer {{public_token}}
+Content-Type: application/json
+
+{
+  "specialization": "Dermatology"
+}
+
+### Attempt to Delete Doctor Profile with Public Token (Should Fail)
+DELETE {{host}}doctor/1/
+Authorization: Bearer {{public_token}}

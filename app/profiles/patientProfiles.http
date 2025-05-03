@@ -1,0 +1,72 @@
+@host = http://chat.localhost/api/profiles/
+@patient_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MTU5NDk5LCJpYXQiOjE3NDQ1NTk0OTksImp0aSI6ImIxNzdkYmFjYTRjYjQ3OWJiODc3MTk4NzQzM2MxNmFlIiwidXNlcl9pZCI6NjF9.PXUcgpKAAgEQ-wUBRjbyxC78W5kBQsF8RPtOmb5EmEI
+@admin_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3NTk0OTEwLCJpYXQiOjE3NDM5OTQ5MTAsImp0aSI6IjJkNDUwY2NmNzk1YTRiN2E5ZGFkYzZiN2UwNDdmNTM5IiwidXNlcl9pZCI6MX0.uqt3S4XsmL0LdFWE89GXJaLmuth0hE--BhWM-4V9YoA
+
+##############################################
+# Patient Self-Service Endpoints
+##############################################
+
+### Retrieve Own Patient Profile (Using a patient's JWT; returns the user info with the nested patient_profile data)
+GET {{host}}my-profile/
+Authorization: Bearer {{patient_token}}
+Accept: application/json
+
+### Expected: 200 OK with details like blood_type, allergies, illnesses, etc.
+
+##############################################
+# Patient Self-Update (PATCH) Profile
+##############################################
+
+### Update Own Patient Profile - Valid Request
+# (Using PATCH so that only specified fields are updated)
+PATCH {{host}}my-profile/
+Authorization: Bearer {{patient_token}}
+Content-Type: application/json
+
+{
+  "blood_type": "A+",
+  "allergies": ["Peanuts", "Dust"],
+  "illnesses": ["Asthma"]
+}
+
+###
+# Expected: 200 OK with updated patient profile details.
+
+### Update Own Patient Profile - Unauthorized Request (Missing Token)
+PATCH {{host}}my-profile/
+Content-Type: application/json
+
+{
+  "blood_type": "B-"
+}
+
+###
+# Expected: 401 Unauthorized error due to missing authentication token.
+
+##############################################
+# Admin-Only Endpoints for Patient Profiles
+##############################################
+
+### Admin: List All Patient Profiles - Valid Request
+# (Using an admin JWT; lists all patient profiles in the system)
+GET {{host}}admin-profiles/
+Authorization: Bearer {{admin_token}}
+Accept: application/json
+
+###
+# Expected: 200 OK with an array of patient profiles.
+
+### Admin: List All Patient Profiles - Unauthorized Request with Patient Token
+GET {{host}}admin-profiles/
+Authorization: Bearer {{patient_token}}
+Accept: application/json
+
+###
+# Expected: 403 Forbidden error because a non-admin user is not allowed to list all profiles.
+
+### Admin: List All Patient Profiles - Unauthorized Request (Missing Token)
+GET {{host}}admin-profiles/
+Accept: application/json
+
+###
+# Expected: 401 Unauthorized error due to missing authentication token.
