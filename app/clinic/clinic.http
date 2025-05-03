@@ -1,0 +1,48 @@
+@host = http://localhost:8000/api/clinic/
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ2ODI4NTk1LCJpYXQiOjE3NDMyMjg1OTUsImp0aSI6ImMyODk5YzJiMGNiNTRjNjM5YjhmYzBjMzg2ZjI4MWM4IiwidXNlcl9pZCI6MX0.CCRuhkEGoB-AMd3pab0tU1Z4p7BR_ouTijNarp1mzW8
+
+### [AUTHENTICATION] Get JWT Token for Staff User (create/update/delete operations)
+POST {{host}}/api/user/token/
+Content-Type: application/json
+
+{
+    "email": "dev@example.com",
+    "password": "dev123456"
+}
+
+### [1] CREATE Clinic (Staff Only)
+POST {{host}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": " Nerve Clinic",
+    "name_ar": "عيادة الأعصاب",
+    "description": "A specialized clinic for nerve disorders",
+    "description_ar": "عيادة متخصصة في اضطرابات الأعصاب",
+    "logo": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>"
+}
+
+
+### [2] LIST All Clinics (Public)
+GET {{host}}
+Accept: application/json
+
+### [3] RETRIEVE Single Clinic (Public)
+GET {{host}}1/
+Accept: application/json
+
+
+### [4] UPDATE Clinic (Staff Only)
+PATCH {{host}}1/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "description": "Advanced cardiac care and prevention",
+    "name_ar": "مركز أمراض القلب"
+}
+
+### [5] DELETE Clinic (Staff Only )
+DELETE {{host}}2/
+Authorization: Bearer {{token}}
