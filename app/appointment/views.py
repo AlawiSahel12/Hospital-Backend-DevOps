@@ -8,28 +8,25 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 
-
-from rest_framework import permissions, status, viewsets
+from rest_framework import generics, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import generics
 
 from clinic.models import Clinic
 from clinic.serializers import ClinicSerializer
 from profiles.models import DoctorProfile
 from schedules.models import DoctorSchedule
 from schedules.serializers import DoctorScheduleSerializer
-from .permissions import IsDoctor
 
 from .models import Appointment
+from .permissions import IsDoctor
 from .serializers import (
     AppointmentReadSerializer,
     AppointmentSerializer,
     DoctorSerializer,
     RescheduleSerializer,
 )
-
 
 # from django.utils import timezone
 # from datetime import timedelta
