@@ -199,10 +199,9 @@ celerybeat.pid
 .celerybeat-schedule.lock
 .celerybeat.pid
 
-app/
-celerybeat-schedule
-celerybeat-schedule-shm
-celerybeat-schedule-wal
-celerybeat-schedule.lock
-celerybeat.pid
+app/celerybeat-schedule
+app/celerybeat-schedule-shm
+app/celerybeat-schedule-wal
+app/celerybeat-schedule.lock
+app/celerybeat.pid
 *.egg-info/
