@@ -32,9 +32,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "10.0.2.2",  # for android edited by ayed
-    "137.184.121.180",
-    "137-184-121-180.nip.io",
-    "chat.localhost",
+    "64-227-184-150.nip.io",
 ]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
