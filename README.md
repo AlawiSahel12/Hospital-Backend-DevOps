@@ -65,6 +65,7 @@ To do this, use the following structure:
   - The code formatting: it will ensure that your code follows our formatting guidelines.
   - The tests: it will run all tests and ensure they pass.
   - If either of these checks fail, an email will be sent and you should fix the issues and push again.
+- If both checks pass, the code will be automatically deployed to the production server.
 
 ---
 
