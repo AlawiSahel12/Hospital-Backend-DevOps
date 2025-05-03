@@ -6,7 +6,7 @@ on:
       - "**" # run checks on every branch
 
 jobs:
-  # ---------------- QUALITY GATES ----------------
+  # ---------------- TESTING REPORTS and CODE QUALITY GATES ----------------
   test-lint:
     name: Test & Quality Gates
     runs-on: ubuntu-latest
@@ -41,9 +41,17 @@ jobs:
           DOMAIN=${{ secrets.DOMAIN }}
           ENV
             # --- end .env creation ---
+      - name: Run Tests and Save Report
+        run: |
+          mkdir -p test-reports
+          docker-compose run --rm app sh -c "
+          pytest --junitxml=test-reports/results.xml"
 
-      - name: Tests
-        run: docker compose run --rm app sh -c "python manage.py wait_for_db && python manage.py test"
+      - name: Upload Test Report Artifact
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: test-report
+          path: test-reports/results.xml
 
       - name: Flake8
         run: docker compose run --rm app flake8
@@ -76,7 +84,7 @@ jobs:
 
   # ---------------- DEPLOY (main only) ----------------
   deploy:
-    needs: test-lint
+    needs: [test-lint, security-scan]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
