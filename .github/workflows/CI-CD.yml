@@ -44,8 +44,11 @@ jobs:
       - name: Run Tests and Save Report
         run: |
           mkdir -p test-reports
-          docker compose run --rm app sh -c "
-          pytest --junitxml=/tmp/results.xml"
+          docker compose run --rm \
+            -v $PWD/test-reports:/reports \
+            app sh -c "
+              python manage.py wait_for_db &&
+              pytest --junitxml=/reports/results.xml"
 
       - name: Upload Test Report Artifact
         uses: actions/upload-artifact@v4.6.2
