@@ -121,13 +121,13 @@ jobs:
           # --- end .env creation ---
           docker ps
           docker compose down
-          echo "Sleeping to allow services to initialize..."
+          echo "1# Sleeping to allow services to initialize..."
           sleep 20
           docker compose build
-          echo "Sleeping to allow services to initialize..."
+          echo "2# Sleeping to allow services to initialize..."
           sleep 20
           docker compose up -d --remove-orphans
-          echo "Sleeping to allow services to initialize..."
+          echo "3# Sleeping to allow services to initialize..."
           sleep 20
           docker compose ps
 
