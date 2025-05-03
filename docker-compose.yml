@@ -14,6 +14,11 @@ services:
     <<: *backend
     build:
       context: .
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "tcp://s1295395.eu-nbg-2.betterstackdata.com:514"
+        tag: "hospital-backend"
       args:
         - DEV=true
     command: >
