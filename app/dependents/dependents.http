@@ -1,0 +1,87 @@
+@guardian_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3NTgzNjEzLCJpYXQiOjE3NDM5ODM2MTMsImp0aSI6IjY1ZmU0ODFkYTVhZjQxZTJiYTVhZTQ4MjUxYTkzNGEzIiwidXNlcl9pZCI6M30.6ME97D4y4OHpVsOiUnSAdEQD4j7sDxQ10qDT9qy6VKQ
+@admin_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3NjA2OTcyLCJpYXQiOjE3NDQwMDY5NzIsImp0aSI6Ijg3MWQ1NjZjNDk2YzQ3MGJiZWUyMjVhZTQ2MzJjOTY3IiwidXNlcl9pZCI6MX0.A5P986Vi_zBkF3Kt5XGM6q1YrpnJZ56zERnWk9bqiwE
+@host = http://localhost:8000/api/dependents/
+@admin_host = http://localhost:8000/api/dependents/admin
+
+##############################################
+# Guardian Endpoints: Invite Dependent
+##############################################
+
+### Invite Dependent (Valid)
+# This endpoint allows a guardian to invite one of their dependents.
+# Expected: 201 Created or 200 OK with a notification message.
+POST {{host}}invite/
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "dependent_id": 5,
+  "email": "alwisahel13@gmail.com"
+}
+
+
+### List my Dependents - Valid Request
+# This should return a list of dependents linked to the guardian.
+GET {{host}}
+Authorization: Bearer {{admin_token}}
+Accept: application/json
+
+
+### Invite Dependent (Invalid - Dependent Does Not Exist / Not Belonging)
+# (Assuming dependent with id 9999 is not linked to this guardian)
+POST {{host}}invite/
+Authorization: Bearer {{guardian_token}}
+Content-Type: application/json
+
+{
+  "dependent_id": 9999,
+  "email": "nonexistent@example.com"
+}
+
+##############################################
+# Admin Endpoints for Dependents
+##############################################
+
+### List All Dependents (Admin Only)
+# This should return all dependent records in the system.
+GET {{admin_host}}/
+Authorization: Bearer {{admin_token}}
+Accept: application/json
+
+### Retrieve a Dependent by ID (Admin Only)
+# (Assuming a dependent with ID 1 exists.)
+GET {{admin_host}}/1/
+Authorization: Bearer {{admin_token}}
+Accept: application/json
+
+### Create a Dependent (Admin Only)
+# This endpoint creates a dependent and links them to a guardian.
+# Replace "guardian" value with a valid User ID in your system.
+POST {{admin_host}}/
+# Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "guardian": 1,
+  "first_name": "ali",
+  "middle_name": "A.",
+  "last_name": "Doe",
+  "national_id": "1372478480",
+  "relationship": "Child",
+  "date_of_birth": "2010-05-15"
+}
+
+### Update a Dependent (PATCH, Admin Only)
+# Update fields for the dependent with ID 1 (for example, change the relationship).
+PATCH {{admin_host}}/2/
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "relationship": "Son"
+}
+
+### Retrieve Updated Dependent (Admin Only)
+GET {{admin_host}}/1/
+Authorization: Bearer {{admin_token}}
+Accept: application/json

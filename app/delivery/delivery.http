@@ -1,0 +1,52 @@
+@host = http://localhost:80/api/delivery
+@auth_host = http://localhost:80/api/user/token/
+
+@staff_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5Nzk2MDEwLCJpYXQiOjE3NDYxOTYwMTAsImp0aSI6IjVjMTZjOTlmMmE3YTRjOWE5NmZhYTRmMzNmNWUyNDU1IiwidXNlcl9pZCI6Mn0.rp8Hhaj3R2DF0RcYpv9VBkTvxVdO3OkoigKOvBxttZg
+
+
+@user_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5Nzk2MDI4LCJpYXQiOjE3NDYxOTYwMjgsImp0aSI6IjAxYTM3ZTNiNDc0YTQ2MzdiYTc4ODU2YjU5YjUyYWIzIiwidXNlcl9pZCI6MX0.b-SQ6hq9Dw66rh6Us-HqKlLbp2FXLXGSx9A9xzfW12U
+
+
+###############################################################################
+# DELIVERY REQUEST ENDPOINTS
+###############################################################################
+
+### [1] CREATE a Delivery Request (Authenticated Patient Only)
+POST {{host}}/create/
+Content-Type: application/json
+Authorization: Bearer {{staff_token}}
+
+{
+  "patient": 1,
+  "delivery_address": "123 Main St, Springfield",
+  "delivery_date": "2023-10-01",
+  "delivery_time": "14:00:00",
+  "status": "pending",
+  "prescription": 1,
+  "delivery_person": "John Doe",
+  "notes": "Please deliver to the front door.",
+  "cost": 10.00
+}
+
+### [2] Get Delivery Requests with prescription query if needed otherwise it will return all delivery requests (Authenticated Patient Only)
+GET {{host}}/?prescription=1
+Content-Type: application/json
+Authorization: Bearer {{user_token}}
+
+
+### [3] Update a Delivery Request by delivery ID (Authenticated Patient Only)
+PUT {{host}}/manage/1/
+Content-Type: application/json
+Authorization: Bearer {{user_token}}
+
+{
+  "patient": 1,
+  "delivery_address": "123 Main St, Springfield",
+  "delivery_date": "2023-10-01",
+  "delivery_time": "14:00:00",
+  "status": "delivered",
+  "prescription": 1,
+  "delivery_person": "John Doe",
+  "notes": "Please deliver to the front door.",
+  "cost": 10.00
+}

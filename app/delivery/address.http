@@ -1,0 +1,97 @@
+@host = http://localhost:8000/api/delivery
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3NTk0OTEwLCJpYXQiOjE3NDM5OTQ5MTAsImp0aSI6IjJkNDUwY2NmNzk1YTRiN2E5ZGFkYzZiN2UwNDdmNTM5IiwidXNlcl9pZCI6MX0.uqt3S4XsmL0LdFWE89GXJaLmuth0hE--BhWM-4V9YoA
+
+##############################################
+# 1. Create FIRST address (should auto-default)
+##############################################
+
+### Create Address 1  (auto default = true)
+POST {{host}}/addresses/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "city": "Dhahran",
+  "area": "KFUPM",
+  "building": "Building 5",
+  "notes": "Leave at reception"
+}
+
+### List Addresses  (confirm default)
+GET {{host}}/addresses/
+Authorization: Bearer {{token}}
+Accept: application/json
+
+
+##############################################
+# 2. Create SECOND address (non-default)
+##############################################
+
+### Create Address 2  (explicit non-default)
+POST {{host}}/addresses/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "city": "Dammam",
+  "area": "Corniche",
+  "building": "Tower 9",
+  "notes": "Call on arrival",
+  "is_default": true
+}
+
+### List Addresses  (now two addresses, only first is default)
+GET {{host}}/addresses/
+Authorization: Bearer {{token}}
+Accept: application/json
+
+
+##############################################
+# 3. Retrieve & update a single address
+##############################################
+# NOTE: adjust IDs as returned above. Assume first ID = 1, second = 2.
+
+### Retrieve Address 2
+GET {{host}}/addresses/2/
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Partial Update Address 2 (modify notes)
+PATCH {{host}}/addresses/7/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "notes": "Use side entrance",
+  "is_default": true
+}
+
+
+
+
+##############################################
+# 5. Validation edge-case: try to clear the ONLY default
+##############################################
+
+### Attempt to unset default on Address 2 (should fail if it is only default)
+PATCH {{host}}/addresses/2/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "is_default": false
+}
+
+
+##############################################
+# 6. Delete an address
+##############################################
+
+### Delete Address 1
+DELETE {{host}}/addresses/1/
+Authorization: Bearer {{token}}
+
+### List Addresses  (verify remaining addresses)
+GET {{host}}/addresses/
+Authorization: Bearer {{token}}
+Accept: application/json
