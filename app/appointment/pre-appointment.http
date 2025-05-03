@@ -1,0 +1,86 @@
+
+@host = https://chat.localhost/api/appointment/
+@token = YOUR_ACCESS_TOKEN_HERE
+
+
+### Get Clinics with Physical Appointments
+GET {{host}}available-clinics/?type=physical
+
+### Get Clinics with Online Appointments
+GET {{host}}available-clinics/?type=online
+
+### Invalid Request (Missing Type)
+GET {{host}}available-clinics/
+
+### Invalid Request (Wrong Type)
+GET {{host}}available-clinics/?type=virtual
+
+
+
+
+### Get Available Doctors - Valid Request
+GET {{host}}available-doctors/?clinic_id=1&type=physical
+Accept: application/json
+
+### Get Available Doctors - Missing Parameters
+GET {{host}}available-doctors/?clinic_id=1
+Accept: application/json
+
+### Get Available Doctors - Invalid Clinic
+GET {{host}}available-doctors/?clinic_id=999&type=physical
+Accept: application/json
+
+### Get Available Doctors - Invalid Type
+GET {{host}}available-doctors/?clinic_id=1&type=virtual
+Accept: application/json
+
+
+
+
+### Get Available Dates - Valid Request
+GET {{host}}available-dates/?doctor_id=1&clinic_id=2&type=online
+Accept: application/json
+
+### Get Available Dates - Missing Parameters
+GET {{host}}available-dates/?doctor_id=1&clinic_id=1
+Accept: application/json
+
+### Get Available Dates - Invalid Clinic
+GET {{host}}available-dates/?doctor_id=1&clinic_id=999&type=physical
+Accept: application/json
+
+### Get Available Dates - No Availability
+GET {{host}}available-dates/?doctor_id=999&clinic_id=1&type=physical
+Accept: application/json
+
+
+
+
+
+@doctor_id = 1
+@clinic_id = 1
+@date = 2025-06-20
+
+### Get avalible time slots of a date -  Valid Request
+GET {{host}}available-slots/?doctor_id=1&clinic_id=1&type=online&date=2025-04-29
+Accept: application/json
+
+### Missing Parameters
+GET {{host}}available-slots/?doctor_id={{doctor_id}}&clinic_id={{clinic_id}}
+Accept: application/json
+
+### Invalid Clinic
+GET {{host}}available-slots/?doctor_id={{doctor_id}}&clinic_id=999&type=physical&date={{date}}
+Accept: application/json
+
+### Inactive Doctor
+GET {{host}}available-slots/?doctor_id=999&clinic_id={{clinic_id}}&type=physical&date={{date}}
+Accept: application/json
+
+### Past Date
+GET {{host}}available-slots/?doctor_id={{doctor_id}}&clinic_id={{clinic_id}}&type=physical&date=2025-03-17
+Accept: application/json
+
+### No Availability
+GET {{host}}available-slots/?doctor_id={{doctor_id}}&clinic_id={{clinic_id}}&type=online&date={{date}}
+Accept: application/json

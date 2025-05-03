@@ -1,0 +1,149 @@
+@host = http://chat.localhost/api/appointment/
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MTU5NDk5LCJpYXQiOjE3NDQ1NTk0OTksImp0aSI6ImIxNzdkYmFjYTRjYjQ3OWJiODc3MTk4NzQzM2MxNmFlIiwidXNlcl9pZCI6NjF9.PXUcgpKAAgEQ-wUBRjbyxC78W5kBQsF8RPtOmb5EmEI
+##############################################
+# Appointment Creation
+##############################################
+
+### Create Appointment - Valid Request
+POST {{host}}appointments/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "schedule": 30,
+  "start_time": "10:30:00"
+}
+
+
+### Create Appointment - Missing 'schedule'
+POST {{host}}appointments/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "start_time": "14:00:00"
+}
+
+
+### Create Appointment - Missing 'start_time'
+POST {{host}}appointments/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "schedule": 3
+}
+
+
+### Create Appointment - Invalid Time Slot
+# (Assumes that "14:05:00" does not match any valid slot for schedule ID 3)
+POST {{host}}appointments/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "schedule": 2,
+  "start_time": "14:05:00"
+}
+
+
+##############################################
+# Appointment Listing & Retrieval
+##############################################
+
+### List Appointments (Default)
+GET {{host}}appointments/
+Authorization: Bearer {{token}}
+Accept: application/json
+
+
+### List Appointments with Filtering by Status
+# (Example: List confirmed appointments)
+GET {{host}}appointments/?status=rescheduled
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### List Appointments with Filtering by appointment_type
+GET {{host}}appointments/?appointment_type=online
+Authorization: Bearer {{token}}
+Accept: application/json
+
+
+### Retrieve Single Appointment - Valid ID
+# (Assumes an appointment with ID 1 exists and belongs to the logged-in user)
+GET {{host}}appointments/1/
+Authorization: Bearer {{token}}
+Accept: application/json
+
+
+### Retrieve Single Appointment - Invalid ID
+GET {{host}}appointments/9999/
+Authorization: Bearer {{token}}
+Accept: application/json
+
+
+##############################################
+# Appointment Cancellation
+##############################################
+
+### Cancel Appointment - Valid Request
+# (Assumes appointment with ID 1 is currently confirmed)
+POST {{host}}appointments/6/cancel/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "cancellation_reason": "No longer needed"
+}
+
+
+### Cancel Appointment - Already Canceled or Completed
+# (Assumes appointment with ID 1 is now canceled from the previous request)
+POST {{host}}appointments/1/cancel/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "cancellation_reason": "Duplicate cancellation attempt"
+}
+
+
+##############################################
+# Appointment Rescheduling
+##############################################
+
+### Reschedule Appointment - Valid Request
+# (Assumes appointment with ID 2 is confirmed and reschedulable;
+# schedule with ID 4 exists and has a valid slot starting at "15:30:00")
+POST {{host}}appointments/2/reschedule/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "new_schedule": 3,
+  "new_start_time": "15:30:00"
+}
+
+
+### Reschedule Appointment - Invalid State
+# (Assumes appointment with ID 3 is not in a confirmed state and therefore cannot be rescheduled)
+POST {{host}}appointments/3/reschedule/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "new_schedule": 4,
+  "new_start_time": "15:30:00"
+}
+
+
+### Reschedule Appointment - Invalid Time Slot
+# (Assumes that for schedule with ID 4, "16:05:00" does not match any valid slot)
+POST {{host}}appointments/2/reschedule/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "new_schedule": 4,
+  "new_start_time": "16:05:00"
+}
