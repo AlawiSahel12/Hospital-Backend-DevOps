@@ -6,49 +6,22 @@ on:
       - "**" # run checks on every branch
 
 jobs:
-  # --------------------------------------------------------------------------
-  # TESTING  ▸  LINT ▸  REPORT ▸  UPLOAD  (with Docker-layer cache)
-  # --------------------------------------------------------------------------
+  # ---------------- TESTING REPORTS and CODE QUALITY GATES ----------------
   test-lint:
     name: Test & Quality Gates
     runs-on: ubuntu-latest
-
     steps:
-      # 0️⃣ ––––– Docker Hub auth (so we can pull postgres/redis)
       - name: Login to Docker Hub
         uses: docker/login-action@v3.4.0
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 1️⃣ ––––– Source
-      - uses: actions/checkout@v4.2.2
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2
 
-      # 2️⃣ ––––– Buildx + layer-cache
-      - name: Set-up Docker Buildx
-        uses: docker/setup-buildx-action@v3.10.0 # single-line install of buildx
-
-      - name: Restore layer cache
-        uses: actions/cache@v4.2.3
-        with:
-          path: /tmp/.buildx-cache # arbitrary local dir for the cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-          # reuse previous commits’ cache
-
-      - name: Build & load app image (cached)
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: Dockerfile
-          tags: devops-backend:test # temporary local tag
-          load: true # <— puts it in `docker images`
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
-
-      # 3️⃣ ––––– Runtime env (.env)  —— same as before
       - name: Write CI .env
-        run: |
+        run: | # ← single YAML literal block
           cat > .env <<'ENV'
           DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
           DB_NAME=${{ secrets.DB_NAME }}
@@ -67,31 +40,26 @@ jobs:
           SECURITY_EMAIL=${{ secrets.SECURITY_EMAIL }}
           DOMAIN=${{ secrets.DOMAIN }}
           ENV
+            # --- end .env creation ---
 
-      # 4️⃣ ––––– Bring up the backing services **without rebuilding app**
-      #       • --build never → skips the slow build we just did.
-      #       • The image we just built/loaded is already available locally.
-      - name: Run tests and save HTML + XML report
+      - name: Run Tests and Save Report
         run: |
-          docker compose \
-            --profile test up -d postgres redis      # optional: limit to deps
-
           docker compose run --rm --user 0 app sh -c "
             python manage.py wait_for_db &&
             pytest \
-              --junitxml=/app/test-reports/results.xml \
-              --html=/app/test-reports/report.html \
-              --self-contained-html"
+                --junitxml=/app/test-reports/results.xml \
+                --html=/app/test-reports/report.html \
+                --self-contained-html"
 
-      - name: Upload Test Report Artifacts
+      - name: Upload Test Report Artifact
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: test-reports
-          path: app/test-reports/
+          name: test-report
+          path: app/test-reports/results.xml
 
-      # 5️⃣ ––––– Lint steps (use the already-built image)
       - name: Flake8
         run: docker compose run --rm app flake8
+
       - name: isort
         run: docker compose run --rm app isort --check-only .
 
