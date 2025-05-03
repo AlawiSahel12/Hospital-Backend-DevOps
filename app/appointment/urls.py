@@ -12,6 +12,7 @@ from .views import (
     AvailableDatesView,
     AvailableDoctorsView,
     AvailableTimeSlotsView,
+    DoctorAppointmentListView,
 )
 
 app_name = "appointment"
@@ -28,5 +29,10 @@ urlpatterns = [
     ),
     path("available-dates/", AvailableDatesView.as_view(), name="available-dates"),
     path("available-slots/", AvailableTimeSlotsView.as_view(), name="available-slots"),
+    path(
+        "doctor/",
+        DoctorAppointmentListView.as_view(),
+        name="doctor-appointments",
+    ),
     path("", include(router.urls)),
 ]

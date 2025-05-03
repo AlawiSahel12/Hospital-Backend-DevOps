@@ -41,3 +41,14 @@ def create_patient_profile(sender, instance, created, **kwargs):
     """
     if created and instance.role == "patient":
         PatientProfile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=DoctorProfile)
+def mark_user_as_doctor(sender, instance, created, **kwargs):
+    """
+    Whenever a DoctorProfile is created, set the linked user's role to 'doctor'
+    (if not already). Runs only once per profile.
+    """
+    if created and getattr(instance.user, "role", None) != "doctor":
+        instance.user.role = "doctor"
+        instance.user.save(update_fields=["role"])

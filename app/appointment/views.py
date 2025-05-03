@@ -8,16 +8,19 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 
+
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import generics
 
 from clinic.models import Clinic
 from clinic.serializers import ClinicSerializer
 from profiles.models import DoctorProfile
 from schedules.models import DoctorSchedule
 from schedules.serializers import DoctorScheduleSerializer
+from .permissions import IsDoctor
 
 from .models import Appointment
 from .serializers import (
@@ -26,6 +29,7 @@ from .serializers import (
     DoctorSerializer,
     RescheduleSerializer,
 )
+
 
 # from django.utils import timezone
 # from datetime import timedelta
@@ -464,3 +468,30 @@ class AppointmentViewSet(viewsets.ModelViewSet):
             "new": self.get_serializer(new_appointment).data,
         }
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+class DoctorAppointmentListView(generics.ListAPIView):
+    """
+    GET /api/appointments/doctor-list/
+    Returns appointments where request.user is the assigned doctor.
+    Supports ?status=<status>&appointment_type=<type> like the main ViewSet.
+    """
+
+    serializer_class = AppointmentReadSerializer
+    permission_classes = [permissions.IsAuthenticated, IsDoctor]
+
+    def get_queryset(self):
+        qs = (
+            Appointment.objects.filter(doctor=self.request.user)
+            .select_related("patient", "clinic", "schedule")
+            .order_by("-created_at")
+        )
+        status_filter = self.request.query_params.get("status")
+        if status_filter:
+            qs = qs.filter(status__iexact=status_filter)
+
+        appt_type = self.request.query_params.get("appointment_type")
+        if appt_type:
+            qs = qs.filter(appointment_type__iexact=appt_type)
+
+        return qs
