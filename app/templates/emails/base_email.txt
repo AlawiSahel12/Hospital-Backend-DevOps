@@ -1,0 +1,9 @@
+Subject: {{ subject }}
+
+Hospital Management System
+
+{% block content %}{% endblock %}
+
+--------------------------------------------------
+This email was sent by the Hospital Management System.
+If you have questions, please contact: {{ support_email }}

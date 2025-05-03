@@ -1,0 +1,22 @@
+Subject: Welcome to KFUPM Medical Center Services!
+
+Dear {{ dependent.first_name }},
+
+Welcome to KFUPM Medical Center! We’re thrilled to have you on board. Your new account has been successfully created and you now have full access to our exclusive healthcare services.
+
+Below are your authentication details to log in:
+
+    Email: {{ email }}
+    Temporary Password: {{ password }}
+
+To start enjoying our services, please download the KFUPM Medical Center app:
+
+    • App Store: https://www.apple.com/app-store/
+    • Google Play: https://play.google.com/store
+
+For security reasons, we strongly recommend that you change your temporary password immediately. Simply log in to the app and click on the “Reset Password” option.
+
+Thank you for choosing KFUPM Medical Center. We’re excited to support you on your health journey!
+
+Warm regards,
+KFUPM Medical Center Team

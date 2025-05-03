@@ -1,0 +1,10 @@
+Dear {{ first_name }},
+
+Welcome to the Hospital Management System. Your account has been created successfully.
+To complete your account setup, please visit the following link:
+{{ setup_link }}
+
+If you have any questions, please contact our support team at {{ support_email }}.
+
+Best regards,
+Hospital Management Team

@@ -1,0 +1,15 @@
+{% extends "emails/base_email.html" %} {% block content %}
+<p>Dear {{ first_name }},</p>
+<p>
+  Welcome to the Hospital Management System. Your account has been created
+  successfully. To complete your account setup, please click the link below:
+</p>
+<p>
+  <a href="{{ setup_link }}">{{ setup_link }}</a>
+</p>
+<p>If you have any questions, our support team is here to help.</p>
+<p>
+  Best regards,<br />
+  Hospital Management Team
+</p>
+{% endblock %}
