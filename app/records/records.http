@@ -1,0 +1,48 @@
+@host = http://localhost:80/api/records/
+@auth_host = http://localhost:8000/api/user/token/
+
+@staff_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5Njk4NDQyLCJpYXQiOjE3NDYwOTg0NDIsImp0aSI6IjdhMzQ1NjE5ZDJlYTQ1ZjA4ZDJlODNmZDM0ZDQwOTc3IiwidXNlcl9pZCI6MX0.JZoNbzFclJMfiGXfjMdgLXTFLOjXHP5qczB_Q0l8v18
+
+@user_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ2NzA0MDkwLCJpYXQiOjE3NDMxMDQwOTAsImp0aSI6IjNjYTBhYjZkMTMwNTRhZmY5MTNmOWM5NzVmZTZhMWY0IiwidXNlcl9pZCI6NH0.sP5h4ZUNEWpSAsv0Gg_7KRQYwmhSQt2SJ0Rx-If_XcM
+###############################################################################
+# MEDICAL RECORD ENDPOINTS
+###############################################################################
+
+### [1] CREATE Medical Record (Staff Only)
+POST {{host}}create/
+Content-Type: application/json
+Authorization: Bearer {{staff_token}}
+
+{
+  "record_file": "https://example.com/record123.pdf",
+  "patient": 1,
+  "doctor": 1,
+  "record_type": "laboratory",
+  "record_date": "2023-10-01",
+  "details": "Chest X-ray report for patient with suspected pneumonia."
+}
+
+
+### [2] LIST All Medical Records as Staff (should return all records)
+GET {{host}}
+Content-Type: application/json
+Authorization: Bearer {{staff_token}}
+
+### [3] LIST All Medical Records as with my patient profile (should return my own records)
+GET {{host}}?record_type=laboratory
+Content-Type: application/json
+Authorization: Bearer {{user_token}}
+
+
+### [4] Manage Medical Record (Staff Only) update the patient with record id
+PUT {{host}}manage/61/
+Content-Type: application/json
+Authorization: Bearer {{staff_token}}
+
+{
+  "record_file": "https://example.com/record123.pdf",
+  "patient": 9,
+  "doctor": 1,
+  "record_type": "radiology",
+  "details": "Why this is happening to not somone blood?"
+}
