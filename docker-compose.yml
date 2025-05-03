@@ -1,6 +1,6 @@
 # --- shared settings for every Python container ----------------------------
 x-backend: &backend
-  image: medcenter-backend:latest # ← single image tag reused
+  image: devops-backend:latest # ← single image tag reused
   env_file: [.env]
   volumes:
     - ./app:/app # keep hot-reload for local dev
@@ -53,7 +53,7 @@ services:
   # -------------------------------------------------------------------------
   caddy:
     image: caddy:2
-    container_name: caddy_proxy
+    container_name: swe455-caddy_proxy
     env_file: [.env]
     environment:
       - DOMAIN=${DOMAIN}
@@ -62,8 +62,8 @@ services:
       - "443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
+      - swe455-caddy_data:/data
+      - swe455-caddy_config:/config
     restart: unless-stopped
     depends_on:
       - app
@@ -73,7 +73,7 @@ services:
   # -------------------------------------------------------------------------
   db:
     image: postgres:14.15-alpine3.21
-    container_name: postgres_container
+    container_name: swe455-postgres_container
     env_file: [.env]
     environment:
       - POSTGRES_DB=${DB_NAME}
@@ -82,7 +82,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - dev-db-data:/var/lib/postgresql/data
+      - swe455-dev-db-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 10s
@@ -92,12 +92,12 @@ services:
 
   redis:
     image: redis:alpine3.21
-    container_name: redis_container
+    container_name: swe455-redis_container
     ports:
       - "6379:6379"
     env_file: [.env]
     volumes:
-      - redis-data:/data
+      - swe455-redis-data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -107,7 +107,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:9.0
-    container_name: pgadmin_container
+    container_name: swe455-pgadmin_container
     env_file: [.env]
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
@@ -115,14 +115,14 @@ services:
     ports:
       - "5050:80"
     volumes:
-      - pgadmin-data:/var/lib/pgadmin
+      - swe455-pgadmin-data:/var/lib/pgadmin
     depends_on:
       - db
     restart: unless-stopped
 
 volumes:
-  dev-db-data:
-  pgadmin-data:
-  caddy_data:
-  caddy_config:
-  redis-data:
+  swe455-dev-db-data:
+  swe455-pgadmin-data:
+  swe455-caddy_data:
+  swe455-caddy_config:
+  swe455-redis-data:
