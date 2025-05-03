@@ -3,8 +3,15 @@ name: CI & CD
 on:
   push:
     branches:
-      - "**" # run checks on every branch
-
+      - main
+      - stage
+      - alawi
+      - ayed
+      - osama
+  pull_request:
+    branches:
+      - main
+      - stage
 jobs:
   # ---------------- TESTING REPORTS and CODE QUALITY GATES ----------------
   test-lint:
