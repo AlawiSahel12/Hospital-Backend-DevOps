@@ -44,7 +44,7 @@ jobs:
       - name: Run Tests and Save Report
         run: |
           mkdir -p test-reports
-          docker-compose run --rm app sh -c "
+          docker compose run --rm app sh -c "
           pytest --junitxml=test-reports/results.xml"
 
       - name: Upload Test Report Artifact
