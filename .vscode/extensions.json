@@ -1,0 +1,20 @@
+{
+  "recommendations": [
+    "github.vscode-github-actions",
+    "github.copilot",
+    "github.copilot-chat",
+    "batisteo.vscode-django",
+    "ms-azuretools.vscode-docker",
+    "ms-vscode-remote.remote-containers",
+    "donjayamanne.python-extension-pack",
+    "kevinrose.vsc-python-indent",
+    "ms-python.vscode-pylance",
+    "ms-python.autopep8",
+    "ms-python.isort",
+    "ms-python.debugpy",
+    "ms-python.python",
+    "ms-python.black-formatter",
+    //REST Client
+    "humao.rest-client"
+  ]
+}

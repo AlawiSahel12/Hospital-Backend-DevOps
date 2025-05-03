@@ -1,0 +1,10 @@
+{$DOMAIN} {
+    reverse_proxy app:8000
+
+    # Optional: explicitly tune WebSocket read buffer & timeout
+    @websockets {
+        header Connection *Upgrade*
+        header Upgrade websocket
+    }
+    reverse_proxy @websockets app:8000
+}

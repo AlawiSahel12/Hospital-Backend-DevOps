@@ -1,0 +1,27 @@
+{
+  "python.analysis.autoImportCompletions": true,
+  "pylint.enabled": false,
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingImports": "none",
+    "reportMissingModuleSource": "none"
+  },
+  // "files.exclude": {
+  //   "**/__pycache__": true,
+  //   "**/*.pyc": true,
+  //   "**/*.pyo": true
+  // },
+  "flake8.args": [
+    "--exclude= migrations,__pycache__,manage.py,settings.py",
+    "--max-line-length=120"
+  ]
+  // "rest-client.environmentVariables": {
+  //   "dev": {
+  //     "host": "http://localhost:8000",
+  //     "token": "your-dev-token"
+  //   },
+  //   "prod": {
+  //     "host": "https://api.yourdomain.com",
+  //     "token": "your-prod-token"
+  //   }
+  // }
+}
