@@ -46,7 +46,10 @@ jobs:
         run: |
           docker compose run --rm --user 0 app sh -c "
             python manage.py wait_for_db &&
-            pytest --junitxml=/app/test-reports/results.xml"
+            pytest \
+                --junitxml=/app/test-reports/results.xml \
+                --html=/app/test-reports/report.html \
+                --self-contained-html"
 
       - name: Upload Test Report Artifact
         uses: actions/upload-artifact@v4.6.2
