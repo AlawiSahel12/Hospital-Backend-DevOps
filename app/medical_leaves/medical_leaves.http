@@ -1,0 +1,51 @@
+@host = http://localhost:80/api/medical_leaves/
+@auth_host = http://localhost:80/api/user/token/
+
+@staff_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ2NzA1MjY2LCJpYXQiOjE3NDMxMDUyNjYsImp0aSI6Ijk0Zjk0MjkyOWE4NDQ1MzFiNjJlZjM5YTUyMzhiZmM4IiwidXNlcl9pZCI6M30.SshrMSZ_gS-QJIqG37r5h9PsYoMalkjqRseJ-EyiDlE
+
+@user_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ2NzA0MDkwLCJpYXQiOjE3NDMxMDQwOTAsImp0aSI6IjNjYTBhYjZkMTMwNTRhZmY5MTNmOWM5NzVmZTZhMWY0IiwidXNlcl9pZCI6NH0.sP5h4ZUNEWpSAsv0Gg_7KRQYwmhSQt2SJ0Rx-If_XcM
+###############################################################################
+# MEDICAL RECORD ENDPOINTS
+###############################################################################
+### [1] CREATE Medical Leave Record (Staff Only)
+POST {{host}}create/
+Content-Type: application/json
+Authorization: Bearer {{staff_token}}
+
+{
+  "record_file": "https://example.com/record123.pdf",
+  "patient": 9,
+  "doctor": 1,
+  "details": "Chest X-ray report for patient with suspected pneumonia.",
+  "from_date": "2025-04-01",
+  "to_date": "2025-04-05",
+  "exams_included": false
+}
+
+
+### [2] LIST All Medical Leave Records as Staff (should return all records)
+GET {{host}}
+Content-Type: application/json
+Authorization: Bearer {{staff_token}}
+
+
+### [3] LIST All Medical Leave Records for My Patient Profile
+GET {{host}}
+Content-Type: application/json
+Authorization: Bearer {{user_token}}
+
+
+### [4] UPDATE Medical Leave Record by ID (Staff Only)
+PUT {{host}}manage/61/
+Content-Type: application/json
+Authorization: Bearer {{staff_token}}
+
+{
+  "record_file": "https://example.com/record123.pdf",
+  "patient": 9,
+  "doctor": 1,
+  "details": "Updated details regarding the medical leave record.",
+  "from_date": "2025-04-01",
+  "to_date": "2025-04-05",
+  "exams_included": true
+}
