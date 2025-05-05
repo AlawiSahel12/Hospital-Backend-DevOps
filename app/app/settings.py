@@ -32,7 +32,9 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "10.0.2.2",  # for android edited by ayed
-    "64-227-184-150.nip.io",
+    "137.184.121.180",
+    "137-184-121-180.nip.io",
+    "chat.localhost",
 ]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -60,11 +62,13 @@ INSTALLED_APPS = [
     "records",
     "profiles",
     "clinic",
+    "notifications",
     "django_celery_beat",
     "dependents",
     "prescriptions",
     "medical_leaves",
     "channels",
+    "corsheaders",
 ]
 
 REST_FRAMEWORK = {
@@ -78,6 +82,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # 🟢 Add this line HERE
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -199,6 +204,7 @@ CELERY_TASK_TRACK_STARTED = True
 
 
 #  EMAIL settings (ensure these are configured for email sending)
+# Make sure to set these environment variables in your .env file or your environment
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
@@ -232,28 +238,17 @@ CELERY_BEAT_SCHEDULE = {
     },
     "close-and-purge-chats": {
         "task": "chat.tasks.auto_close_and_purge",
-        "schedule": 180.0,  # every 5 minutes
+        "schedule": 100.0,
+    },
+    "auto-complete-old-appointments": {
+        "task": "appointment.tasks.auto_complete_old_appointments",
+        "schedule": 180.0,  # every minute
     },
 }
 
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
-            "format": "[{asctime}] {levelname} {name}: {message}",
-            "style": "{",
-        },
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "verbose",
-        },
-    },
-    "root": {
-        "handlers": ["console"],
-        "level": "INFO",
-    },
-}
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # React default port
+    "http://127.0.0.1:3000",
+]

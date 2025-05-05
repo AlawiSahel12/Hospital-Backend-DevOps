@@ -1,7 +1,8 @@
 # chats/views.py
-from django.utils import timezone
 
-from rest_framework import mixins, viewsets
+from django.shortcuts import get_object_or_404
+
+from rest_framework import mixins, status, viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -49,36 +50,30 @@ class MessageViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 class CloseChatAPIView(APIView):
     """
     POST /api/chats/<session_id>/close/
-    Irreversibly closes the chat. 204 on success.
+    Deletes the ChatSession (and its messages) immediately.
+    Broadcasts a force-close event to all WebSocket consumers.
     """
 
     permission_classes = [IsAuthenticated, IsChatParticipant]
 
     def post(self, request, session_id):
-        try:
-            session = ChatSession.objects.select_related("appointment").get(
-                pk=session_id
-            )
-        except ChatSession.DoesNotExist:
-            return Response({"detail": "Chat session not found."}, status=404)
+        # Fetch or 404
+        session = get_object_or_404(
+            ChatSession.objects.select_related("appointment"), pk=session_id
+        )
 
-        # permission check (object level)
+        # Check user is participant (doctor or patient)
         self.check_object_permissions(request, session)
 
-        if session.closed_at:
-            # Already closed/purged → idempotent 204
-            return Response(status=204)
-
-        # Mark closed *now* and record who did it
-        session.closed_at = timezone.now()
-        session.closed_by = request.user
-        session.save(update_fields=["closed_at", "closed_by"])
-
-        # Optional: push "force_close" event so connected sockets disconnect immediately
+        # Broadcast a forced-close event to any connected sockets
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
             f"chat-{session_id}",
             {"type": "chat.force_close"},
         )
 
-        return Response(status=204)
+        # Delete the session row (cascades to ChatMessage)
+        session.delete()
+
+        # Return 204 — session is gone
+        return Response(status=status.HTTP_204_NO_CONTENT)
