@@ -62,7 +62,6 @@ INSTALLED_APPS = [
     "records",
     "profiles",
     "clinic",
-    "notifications",
     "django_celery_beat",
     "dependents",
     "prescriptions",
